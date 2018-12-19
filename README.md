@@ -1,13 +1,15 @@
-# Foody
+# Projet fil rouge
 
 ## Resume de l'application
-Application de gestion de repas.
+Jeu d'apprentissage par navigateur
 
 ## Fonctionnalites:
-* Ajouter/supprimer/consulter un aliment de base
-* Consulter la totalite des aliments enregistres
-* Ajouter/supprimer/consulter un repas (constitue de X aliments)
-* Consulter la totalite des repas enregistres
+* Choisir un theme ou une matiere (Math, geo, ...)
+* Systeme de progression par niveau
+* Necessite de terminer un niveau pour acceder au suivant
+* Affichage de l'information a retenir au demarrage du niveau puis questions pour valider le parcours
+* Possibilite pour un prof/administrateur de creer son propre contenu
+* Le personnage se deplace seul et interagit avec le decor en fonction des reponses du joueur
 
 ## Etapes de realisation:
 ### Initialisation
@@ -23,10 +25,4 @@ Application de gestion de repas.
 3. Tester la coherences des liens et de la navigation
 
 ### Choix et creation de la structure de donnees
-1. Choix de la technologie et du type de base de donnes (relationnelle, objets, graphs)
-2. Installation et parametrage de la base de donnees
-3. Creation des methodes pour la communication avec la base de donnees (lecture, insertion, suppression, etc...)
-
-### Creation du routage
-1. Parametrer le serveur
-2. Choisir le mode de routage du server
+1. Choix de la technologie et du type de base de donnes => MySQL
