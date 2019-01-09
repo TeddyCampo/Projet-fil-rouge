@@ -7,12 +7,10 @@
 <body>
     <h1>Nom de notre super jeu</h1>
     <div>
-        <a href="./project.html">Detail du projet</a>
-        <a href="./team.html">L'equipe</a>
-        <a href="./subscribe.html">S'inscrire</a>
-        <a href="./sign.html">Se connecter</a>
+        <a href="#project-details">Detail du projet</a>
+        <a href="#team">L'equipe</a>
     </div>
-        <a href="./sign.html"><button>Jouer!</button></a>    
+        <a href="/login"><button>Jouer!</button></a>    
     <div>
         <h2>Meilleurs scores</h2>
         <ol>
@@ -28,6 +26,16 @@
                 <li>{{ player.username }} /// {{ player.date_joined }}</li>
             {% endfor %}
         </ul>
+    </div>
+    <div>
+        <a name="project-details">
+            <h2>Project Details</h2>
+        </a>    
+    </div>
+    <div>
+        <a name="team">
+            <h2>The team</h2>
+        </a>
     </div>
 </body>
 </html>

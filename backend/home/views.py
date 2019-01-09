@@ -5,9 +5,6 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from .models import User
 
-def index(request):
-    return HttpResponse("A lil' test")
-
 def top_five(request):
     top_players_list = User.objects.order_by('-top_score')[:5]
     latest_players_list = User.objects.order_by('-date_joined')[:5]
