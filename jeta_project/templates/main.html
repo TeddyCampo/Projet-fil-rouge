@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+        {% load static %}
+        <link rel="stylesheet" href="{% static "assets/css/main.css" %}"/>
+        <noscript><link rel="stylesheet" href="{% static "assets/css/noscript.css" %}"/></noscript>
+        <title>{% block title %}Titre de ma page{% endblock %}</title>
+    </head>
+
+    <body class="landing is-preload">
+        <!-- Header -->
+        <div id="page-wrapper">
+            <header id="header" class="alt">
+                <h1><a href="/">Alumni Educ</a></h1>
+                <nav id="nav">
+                    <ul>
+                        <li class="special">
+                            <a href="#menu" class="menuToggle"><span>Menu</span></a>
+                            <div id="menu">
+                                <ul>
+                                    <li><a href="/">Accueil</a></li>    <!-- Pointe sur localhost/ -->
+                                    <li><a href="game">Jouer</a></li>   <!-- Pointe sur localhost/game -->
+                                    <li><a href="project">C'est quoi Alumni Educ?</a></li>
+                                    <li><a href="profs">Pour les professeurs</a></li>							
+                                    <li><a href="faq">F.A.Q</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                </nav>
+            </header>
+        </div>
+    {% block content %}
+        <!-- Contenu de la page -->
+    {% endblock %}
+        <!-- Footer -->
+        <div id="page-wrapper">
+            <footer id="footer">
+                <ul class="icons">
+                    <li><a href="https://twitter.com/?lang=fr" class="icon fa-twitter"><span class="label">Twitter</span></a></li>
+                    <li><a href="https://fr-fr.facebook.com/" class="icon fa-facebook"><span class="label">Facebook</span></a></li>
+                    <li><a href="https://www.instagram.com/?hl=fr" class="icon fa-instagram"><span class="label">Instagram</span></a></li>
+                    <li><a href="https://dribbble.com/" class="icon fa-dribbble"><span class="label">Dribbble</span></a></li>
+                    <li><a href="#" class="icon fa-envelope-o"><span class="label">Email</span></a></li>
+                </ul>
+                <ul class="copyright">
+                    <li>&copy; Untitled</li><li>Design: <a href="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/intermediary/f/07f7a6bb-2d35-4630-93fc-be249af22b3e/d7t9nqg-4c8bba7b-a484-4d48-957f-316f627db8e8.jpg">Fluffy</li>
+                </ul>
+            </footer>
+        </div>
+
+		<!-- Scripts -->
+        <script src="{% static "assets/js/jquery.min.js" %}"></script>
+        <script src="{% static "assets/js/jquery.scrollex.min.js" %}"></script>
+        <script src="{% static "assets/js/jquery.scrolly.min.js" %}"></script>
+        <script src="{% static "assets/js/browser.min.js" %}"></script>
+        <script src="{% static "assets/js/breakpoints.min.js" %}"></script>
+        <script src="{% static "assets/js/util.js" %}"></script>
+        <script src="{% static "assets/js/main.js" %}"></script>
+    </body>
+
+</html>
