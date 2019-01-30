@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django.shortcuts import render
 from django.http import HttpResponse
-from game.models import User
+from .models import User
 
 def top_five(request):
     top_players_list = User.objects.order_by('-top_score')[:5]
@@ -11,3 +11,6 @@ def top_five(request):
     return render(request, 'home/index.html', {
         'top_players_list': top_players_list,
         'latest_players_list': latest_players_list})
+
+def prompt_question(request):
+        
