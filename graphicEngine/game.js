@@ -31,19 +31,24 @@ let progress;
 let canvas;
 let question_count = 0;
 let answers = [];
+let arrows = [];
 let announcement;
+let questionnaire;
+let validate;
+let index = 0;
+let timer = 0;
 
 // Example data from the database
 let question_db = [
     {'id': 0,
     'chapter': 1,
-    'text': "Quoi est-elle la capitale de la France ?"},
+    'text': "Quelle est la capitale de la France ?"},
     {'id': 1,
     'chapter': 1,
-    'text': "Quoi est-elle la capitale des Etats-Unis ?"},
+    'text': "Quelle est la capitale des Etats-Unis ?"},
     {'id': 2,
     'chapter': 1,
-    'text': "Quoi est-elle la capitale de la Lithuanie ?"},
+    'text': "Quelle est la capitale de la Lithuanie ?"},
 ];
 let answer_db = [
     {'id': 1,
@@ -143,6 +148,9 @@ function create () {
     // Input Events
     cursors = this.input.keyboard.createCursorKeys();
 
+    // Pour valider l'une des reponses, l'utilisateur utilise le cle entre
+    validate = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER)
+
     // Creation d'un groupe etoile (creation d'une etoile + 11 autres avec decalage sur l'axe x)
     stars = this.physics.add.group({
         key: 'star',
@@ -192,23 +200,49 @@ function update () {
         return;
     }
 
-    // Si touche enfoncee
-    if (cursors.left.isDown) {
-        player.setVelocityX(-160);
-        player.anims.play('left', true);
+    // Si les questions sont affichees
+    if (questionnaire) {
+        arrows[index].setText('> ')
+        if (cursors.down.isDown) {
+            if (timer % 12 === 0) {
+                arrows[index].setText('')
+                index = (index + 1) % arrows.length
+            }
+            timer += 1
+        }
+        else if (cursors.up.isDown) {
+            if (timer % 12 === 0) {
+                arrows[index].setText('')
+                index = (index + (arrows.length - 1)) % arrows.length
+            }
+            timer += 1
+        }
+        else if (validate.isDown) {
+            arrows[index].setText('')
+            timer = 0
+            // Passe les parametres pour traiter le choix
+            userChose(answers, index, this)
+        }
     }
-    else if (cursors.right.isDown) {
-        player.setVelocityX(160);
-        player.anims.play('right', true);
-    }
+    // Si touche enfoncee pendant le jeux normal
     else {
-        player.setVelocityX(0);
-        player.anims.play('turn');
-    }
+        if (cursors.left.isDown) {
+            player.setVelocityX(-160);
+            player.anims.play('left', true);
+        }
+        else if (cursors.right.isDown) {
+            player.setVelocityX(160);
+            player.anims.play('right', true);
+        }
+        else {
+            player.setVelocityX(0);
+            player.anims.play('turn');
+        }
 
-    // Verification du contact avec le sol pour le saut
-    if (cursors.up.isDown && player.body.touching.down) {
-        player.setVelocityY(-530);
+        // Verification du contact avec le sol pour le saut
+        if (cursors.up.isDown && player.body.touching.down) {
+            player.setVelocityY(-530);
+        }
     }
 }
 
@@ -240,34 +274,31 @@ function collectStar (player, star) {
         // Suppression de la gravite
         bomb.allowGravity = false;
     }
-    // Si il y a des questions qui restent a poser
-    else if (question_count < question_db.length) {
-        // Une question est posee apres 3 etoiles attrappees
-        if (starCount % 3 === 0) {
-            announcement.setText('')
-            this.physics.pause()
+    // Affiche la question est ses reponses
+    else if (starCount % 3 === 0) {
+        announcement.setText('')
+        this.physics.pause()
 
-            let questionID = question_db[question_count].id;
+        let questionID = question_db[question_count].id;
 
-            // Une question choisie par le parametre question_count
-            question = this.add.text(120, 100, question_db[question_count].text, { fontSize: '25px', fill: '#000'})
+        // Une question choisie par le parametre question_count
+        question = this.add.text(120, 100, question_db[question_count].text, { fontSize: '25px', fill: '#000'})
 
-            // Generation d'une liste des reponses qui correspondent a la question
-            let y_position = 130;
-            answers = []
-            answer_db.forEach(obj => {
-                if (obj.q_id === questionID) {
-                    answers.push({
-                        database: obj,
-                        shown: this.add.text(150, y_position, obj.text, { fontSize: '20px', fill: '#000'})
-                    })
-                    y_position += 25
-                }
-            })
-            console.log(answers)
-            // Selection d'une reponse
-            chooseResponse(answers, this)
-        }
+        // Generation d'une liste des reponses qui correspondent a la question
+        let y_position = 130;
+        answers = []
+        answer_db.forEach(obj => {
+            if (obj.q_id === questionID) {
+                answers.push({
+                    database: obj,
+                    shown: this.add.text(150, y_position, obj.text, { fontSize: '20px', fill: '#000'})
+                })
+                arrows.push(this.add.text(120, y_position, '', { fontSize: '20px', fill: '#000'}))
+                y_position += 25
+            }
+        })
+        console.log('Answers: ', answers)
+        questionnaire = true
     }
 }
 
@@ -275,49 +306,41 @@ function hitBomb (player, bomb) {
     this.physics.pause();
     player.setTint(0xff0000);
     player.anims.play('turn');
+    announcement.setText('Dommage, tu es mort')
     gameOver = true;
 }
 
-function chooseResponse (answers, my_this) {
-    // Attend que l'utilisateur click
-    canvas.onclick = (e) => {
-        let responseChosen = false
-        let count = 0
+// Deconstruction de la questionnaire
+function userChose (answers, count, my_this) {
+    answers[0].shown.setText('')
+    answers[1].shown.setText('')
+    answers[2].shown.setText('')
+    question.text = ''
+    if (answers[count].database.correct) {
+        score += 10
+        scoreText.setText('Score: ' + score);
+        question_count += 1
 
-        // Compare les coordonnees des objets contre celles du click
-        while (count < answers.length) {
-            let x_c = answers[count].shown.x
-            let y_c = answers[count].shown.y
-            let w = answers[count].shown.width
-            let h = answers[count].shown.height + 70 // Il faut ajouter 70 px pour une raison....
-
-            if (e.clientX >= x_c && e.clientX <= x_c + w) {
-                if (e.clientY >= y_c && e.clientY <= y_c + h) {
-                    responseChosen = true
-                    break
-                }
-            }
-            count += 1
+        if (question_count === question_db.length) {
+            announcement.setText("Felicitations\nTu as termine le niveau")
+            my_this.scene.pause()
+        } else {
+            announcement.setText("Tres bien!\n+10 points")
         }
-        if (responseChosen) {
-            console.log("Reponse choisie: ", answers[count].database.text)
-            // Faire dispairaitre la question et ses reponses
-            answers[0].shown.setText('')
-            answers[1].shown.setText('')
-            answers[2].shown.setText('')
-            question.text = ''
-            if (answers[count].database.correct) {
-                announcement.setText("Tres bien!\n+10 points")
-                score += 10
-                scoreText.setText('Score: ' + score);
-            } else {
-                announcement.setText('Mauvaise reponse!\n-5 points')
-                score -= 5
-                scoreText.setText('Score: ' + score);
-            }
-            // Avance a la prochaine question
-            question_count += 1
-            my_this.physics.resume()
+        
+    } else {
+        announcement.setText('Mauvaise reponse!\n-5 points')
+        score -= 5
+        scoreText.setText('Score: ' + score);
+        function restart() {
+            player.x = 100
+            player.y = 450
+            question_count = 0
         }
+        restart()
     }
+    index = 0
+    questionnaire = null
+    arrows[index].setText('')
+    my_this.physics.resume()
 }
