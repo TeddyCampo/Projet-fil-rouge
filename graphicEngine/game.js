@@ -203,10 +203,16 @@ function update () {
     // Si les questions sont affichees
     if (questionnaire) {
         arrows[index].setText('> ')
-        if (cursors.down.isDown) {
+
+        if (cursors.left.isDown || cursors.right.isDown) {
+            console.log('ignoring whatever you do')
+            console.log(index)
+        }
+        else if (cursors.down.isDown) {
             if (timer % 12 === 0) {
                 arrows[index].setText('')
                 index = (index + 1) % arrows.length
+                console.log(index)
             }
             timer += 1
         }
@@ -214,10 +220,11 @@ function update () {
             if (timer % 12 === 0) {
                 arrows[index].setText('')
                 index = (index + (arrows.length - 1)) % arrows.length
+                console.log(index)
             }
             timer += 1
         }
-        else if (validate.isDown) {
+        else if (validate.isDown) {            
             arrows[index].setText('')
             timer = 0
             // Passe les parametres pour traiter le choix
