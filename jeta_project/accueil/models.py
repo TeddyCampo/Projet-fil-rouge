@@ -17,3 +17,4 @@ class Player(models.Model):
 
     def was_published_recently(self):
         return self.date_joined >= timezone.now() - datetime.timedelta(days=1)
+
