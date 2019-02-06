@@ -10,9 +10,6 @@ let config = {
       debug: false
     }
   },
-  loader: {
-      async: false
-  },
   scene: {
     preload: preload,
     create: create,
@@ -40,7 +37,8 @@ let announcement;
 let questionnaire;
 let validate;
 let index = 0;
-let timer = 0;
+let down_is_down;
+let up_is_down;
 
 // Example data from the database
 let question_db = [
@@ -187,22 +185,23 @@ function update() {
     arrows[index].setText("> ");
 
     if (cursors.left.isDown || cursors.right.isDown) {
-      console.log("ignoring whatever you do");
-      console.log(index);
+      // Do not do anything
     } else if (cursors.down.isDown) {
-      if (timer % 12 === 0) {
-        arrows[index].setText("");
-        index = (index + 1) % arrows.length;
-        console.log(index);
-      }
-      timer += 1;
+      down_is_down = true;
+      up_is_down = false;
     } else if (cursors.up.isDown) {
-      if (timer % 12 === 0) {
-        arrows[index].setText("");
-        index = (index + (arrows.length - 1)) % arrows.length;
-        console.log(index);
-      }
-      timer += 1;
+      up_is_down = true;
+      down_is_down = false;
+    } else if (down_is_down && cursors.down.isUp) {
+      arrows[index].setText("");
+      index = (index + 1) % arrows.length;
+      console.log(index);
+      down_is_down = false
+    } else if (up_is_down && cursors.up.isUp) {
+      arrows[index].setText("");
+      index = (index + (arrows.length - 1)) % arrows.length;
+      console.log(index);
+      up_is_down = false
     } else if (validate.isDown) {
       arrows[index].setText("");
       timer = 0;

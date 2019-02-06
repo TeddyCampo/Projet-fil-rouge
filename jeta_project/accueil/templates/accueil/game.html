@@ -5,11 +5,15 @@
 		<!-- Page Wrapper -->
 			<!-- Main -->
 			<script src="https://cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js"></script>
-
+			<style src="{% static "assets/css/game.css" %}"></style>"
+			<link rel="stylesheet" href="{% static "assets/css/game.css" %}"/>
 			<article id="main">
 				<section class="wrapper style5">
-					<div id="phaser-game">
+					<div id="phaser-game" class="game">
 						<script src="{% static "assets/js/game.js" %}"></script>
+					</div>
+					<div class="mobile-game">
+						<h2>Ce jeux n'est qu'accessible par desktop.</h2>
 					</div>
 					<hr />
 					<div class="inner">
@@ -19,5 +23,20 @@
 					</div>
 				</section>
 			</article>
+			<!-- add to style: prevent game less than desktop -->
+			<!-- <style>
+				#header.alt {
+					background: #2e3842;
+				}
+				.game {
+					display: flex;
+					align-items: center;
+				}
+				.game canvas {
+					display: inline;
+					margin-left: auto;
+					margin-right: auto;
+				}
+			</style> -->
 
 	{% endblock %}
