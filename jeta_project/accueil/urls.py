@@ -7,5 +7,6 @@ urlpatterns = [
     path('project', views.project),
     path('profs', views.profs),
     path('faq', views.faq),
-    path('game', views.game)
+    path('game', views.game),
+    path('sign', views.sign),
 ]
