@@ -5,7 +5,7 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
         {% load static %}
-        <link rel="stylesheet" href="{% static "assets/css/main.css" %}"/>
+        <link rel="stylesheet" href="{% static "assets/css/main.css" %}"/>  
         <noscript><link rel="stylesheet" href="{% static "assets/css/noscript.css" %}"/></noscript>
         <title>{% block title %}Titre de ma page{% endblock %}</title>
     </head>
@@ -23,6 +23,7 @@
                                 <ul>
                                     <li><a href="/">Accueil</a></li>    <!-- Pointe sur localhost/ -->
                                     <li><a href="game">Jouer</a></li>   <!-- Pointe sur localhost/game -->
+                                    <li><a href="sign">Se connecter</a></li>
                                     <li><a href="project">C'est quoi Alumni Educ?</a></li>
                                     <li><a href="profs">Pour les professeurs</a></li>							
                                     <li><a href="faq">F.A.Q</a></li>
