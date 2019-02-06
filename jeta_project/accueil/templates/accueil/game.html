@@ -3,16 +3,15 @@
 	{% block content %}
 	{% load static %}
 		<!-- Page Wrapper -->
-
 			<!-- Main -->
+			<script src="https://cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js"></script>
+
 			<article id="main">
 				<section class="wrapper style5">
-					<div class = "inner">
-						<span class="image fit"><img src="{% static "accueil/images/banner.jpg" %}" alt="" /></span>
-					</div>		
-
+					<div id="phaser-game">
+						<script src="{% static "assets/js/game.js" %}"></script>
+					</div>
 					<hr />
-
 					<div class="inner">
 						<h4>Feugiat aliquam</h4>
 						<p>Nam sapien ante, varius in pulvinar vitae, rhoncus id massa. Donec varius ex in mauris ornare, eget euismod urna egestas. Etiam lacinia tempor ipsum, sodales porttitor justo. Aliquam dolor quam, semper in tortor eu, volutpat efficitur quam. Fusce nec fermentum nisl. Aenean erat diam, tempus aliquet erat.</p>
