@@ -1,0 +1,29 @@
+#header.alt {
+    background: #2e3842;
+}
+.game {
+    display: flex;
+    align-items: center;
+}
+.game canvas {
+    display: inline;
+    margin-left: auto;
+    margin-right: auto;
+}
+.mobile-game {
+    display: none;
+}
+@media only screen and (max-width: 1200px) {
+    .game {
+        display: none;
+    }
+    .mobile-game {
+        display: flex;
+        align-items: center;
+    }
+    .mobile-game h2 {
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
