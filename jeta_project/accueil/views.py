@@ -26,5 +26,5 @@ def faq(request):
 def game(request):
     return render(request, 'accueil/game.html')
 
-def sign(request):
-    return render(request, 'accueil/sign.html')
+def login(request):
+    return render(request, 'registration/login.html')
