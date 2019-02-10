@@ -9,6 +9,6 @@ urlpatterns = [
     path('profs', views.profs),
     path('faq', views.faq),
     path('game', views.game),
-    path('login', views.login),
-    # path('sign', include('django.contrib.auth.urls')) #Chemin de test pour la config du login
+    # path('login', views.login),
+    path('', include('django.contrib.auth.urls')) #Chemin de test pour la config du login
 ]
