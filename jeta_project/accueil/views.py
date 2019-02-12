@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from datetime import datetime
 from .models import Player
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
@@ -23,8 +24,19 @@ def profs(request):
 def faq(request):
     return render(request, 'accueil/faq.html')
 
+
+# @login_required
 def game(request):
     return render(request, 'accueil/game.html')
 
-def login(request):
-    return render(request, 'registration/login.html')
+# def login(request):
+#     return render(request, 'registration/login.html')
+
+# def login(request):
+#     username = request.POST['username']
+#     password = request.POST['password']
+#     user = authenticate(request, username=username, password=password)
+#     if user is not None:
+#         return render(request, 'accueil/index.html')
+#     else:
+#         return render(request, "<p> Merci d'entrer un identifiant valide ou de vous inscrire </p>")
