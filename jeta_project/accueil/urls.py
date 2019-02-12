@@ -11,6 +11,6 @@ urlpatterns = [
     path('faq', views.faq),
     path('game', views.game),
     # path('login', views.login),
-    path('accounts/', include('django.contrib.auth.urls')),  #Chemin de test pour la config du login
-    path('', TemplateView.as_view(template_name='game.html'), name='game'),  # new
+    # path('accounts/', include('django.contrib.auth.urls')),  #Chemin de test pour la config du login
+    # path('', TemplateView.as_view(template_name='game.html'), name='game'),  # new
 ]

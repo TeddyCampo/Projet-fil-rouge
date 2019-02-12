@@ -2,6 +2,7 @@ from django.shortcuts import render
 from datetime import datetime
 from .models import Player
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect
 
 # Create your views here.
 
@@ -24,8 +25,7 @@ def profs(request):
 def faq(request):
     return render(request, 'accueil/faq.html')
 
-
-# @login_required
+@login_required
 def game(request):
     return render(request, 'accueil/game.html')
 

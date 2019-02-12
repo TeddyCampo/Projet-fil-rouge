@@ -10,7 +10,8 @@
 
 {% if next %}
 {% if user.is_authenticated %}
-    <p>Your account doesn't have access to this page. To proceed, please login with an account that has access.</p>
+    <p>Your account doesn't have access to this page.
+    To proceed, please login with an account that has access.</p>
 
 {% else %}
     <p>Please login to see this page.</p>
@@ -83,7 +84,8 @@
                             <label>
                                 Nom d'utilisateur<span class="req">*</span>
                             </label>
-                            <input type="text" required autocomplete="off">
+                            <p>{{ form.username }}</p>
+                            <!-- <input type="text" required autocomplete="off"> -->
                         </div>
 
                         <!-- <div class="field-wrap">
@@ -97,11 +99,15 @@
                             <label>
                                 Mot de passe<span class="req">*</span>
                             </label>
-                            <input type="password" required autocomplete="off">
+                            <p>{{ form.password }}</p>
+                            <!-- <input type="password" required autocomplete="off"> -->
                         </div>
 
-                        <p class="forgot"><a href="#">Mot de passe oublié ?</a></p>
+                        {# Assumes you setup the password_reset view in your URLconf #}
+                        <p class="forgot"><a href="{% url 'password_reset' %}">Mot de passe oublié ?</a></p>
 
+                        <!-- <input type="submit" value="GO !">
+                        <input type="hidden" name="next" value="{{ next }}"> -->
                         <button type="submit" class="button button-block">GO !</button>
 
                     </form>
