@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth.models import User
 
 import datetime
 
@@ -54,9 +55,9 @@ class Teacher(models.Model):
 
 class Player(models.Model):
     username = models.CharField(max_length=200)
+    # username = models.ForeignKey(User, on_delete=models.CASCADE)
     password = models.CharField(max_length=200)
     top_score = models.IntegerField('high score', default=0)
-    # date_joined = models.DateTimeField('date joined')
     date_joined = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

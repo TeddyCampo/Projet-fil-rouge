@@ -1,8 +1,12 @@
-from django.shortcuts import render
-from datetime import datetime
-from .models import Player
+from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import redirect
+from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.models import User
+from django.db import transaction
+from .models import Player
+from .forms import UserForm, ParagraphErrorList
 
 # Create your views here.
 
@@ -29,11 +33,39 @@ def faq(request):
 def game(request):
     return render(request, 'accueil/game.html')
 
-# def login(request):
-#     username = request.POST['username']
-#     password = request.POST['password']
-#     user = authenticate(request, username=username, password=password)
-#     if user is not None:
-#         return render(request, 'accueil/index.html')
-#     else:
-#         return render(request, "<p> Merci d'entrer un identifiant valide ou de vous inscrire </p>")
+@transaction.atomic
+def signup(request):
+    context = {}
+    if request.method == 'POST':
+        form = UserForm(request.POST, error_class=ParagraphErrorList)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password1']
+            try:
+                with transaction.atomic():
+                    user = User.objects.filter(username=username)
+                    if not user.exists():
+                        # If a contact is not registered, create a new one.
+                        user = User.objects.create(
+                            username=username,
+                            password=password
+                        )
+                        player = Player.objects.create(
+                            top_score = 0
+                        )
+                        player.save()
+                    else:
+                        user = user.first()
+                    # album = get_object_or_404(Album, id=album_id) #TODO
+
+                    user.save()
+                    return redirect('/')
+
+            except IntegrityError:
+
+                form.errors['internal'] = "Une erreur interne est apparue. Merci de recommencer votre requête."
+    else:
+        form = UserForm()
+    context['form'] = form
+    context['errors'] = form.errors.items()
+    return render(request, 'accueil/signup.html', context)
