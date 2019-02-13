@@ -1,0 +1,32 @@
+{% extends "main.html" %}
+{% block title %}Jouer{% endblock %}
+	{% block content %}
+	{% if user.is_authenticated %}
+	<h1>Hi {{ user.username }}!</h1>
+	{% else %}
+	<p>You are not logged in</p>
+	<a href="{% url 'login' %}">LOGIN</a>
+	{% endif %}
+	{% load static %}
+		<!-- Page Wrapper -->
+			<!-- Main -->
+			<script src="https://cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js"></script>
+			<style src="{% static "assets/css/game.css" %}"></style>
+			<link rel="stylesheet" href="{% static "assets/css/game.css" %}"/>
+			<article id="main">
+				<section class="wrapper style5">
+					<div id="phaser-game" class="game">
+						<script src="{% static "assets/js/game.js" %}"></script>
+					</div>
+					<div class="mobile-game">
+						<h2>Ce jeux n'est qu'accessible par desktop.</h2>
+					</div>
+					<hr />
+					<div class="inner">
+						<h4>Feugiat aliquam</h4>
+						<p>Nam sapien ante, varius in pulvinar vitae, rhoncus id massa. Donec varius ex in mauris ornare, eget euismod urna egestas. Etiam lacinia tempor ipsum, sodales porttitor justo. Aliquam dolor quam, semper in tortor eu, volutpat efficitur quam. Fusce nec fermentum nisl. Aenean erat diam, tempus aliquet erat.</p>
+						<p>Etiam iaculis nulla ipsum, et pharetra libero rhoncus ut. Phasellus rutrum cursus velit, eget condimentum nunc blandit vel. In at pulvinar lectus. Morbi diam ante, vulputate et imperdiet eget, fermentum non dolor. Ut eleifend sagittis tincidunt. Sed viverra commodo mi, ac rhoncus justo. Duis neque ligula, elementum ut enim vel, posuere finibus justo. Vivamus facilisis maximus nibh quis pulvinar. Quisque hendrerit in ipsum id tellus facilisis fermentum. Proin mauris dui, at vestibulum sit amet, auctor bibendum neque.</p>
+					</div>
+				</section>
+			</article>
+	{% endblock %}
