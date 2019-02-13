@@ -30,35 +30,27 @@
     <section id="onePlus" class="wrapper style1 special">
 
         <div class="form">
-                <ul class="tab-group">
-                        <li class="tab active"><a>S'inscrire</a></li>
-                        <li class="tab"><a>Se connecter</a></li>
-                    </ul>
+            <ul class="tab-group">
+                <li class="tab active"><a>S'inscrire</a></li>
+                <li class="tab"><a>Se connecter</a></li>
+            </ul>
+
             <div class="tab-content">
-                <div id="login">
-                    <h1>Heureux de vous revoir ! :) </h1>
-                    <form method="post" action="{% url 'login' %}">
+                <!-- <div id="signup"> TODO: CORRECT CSS -->
+                    <h1>Formulaire d'inscription</h1>
+                    <form method="post">
                         {% csrf_token %}
-                        <div class="field-wrap">
-                            <label>
-                                Nom d'utilisateur<span class="req">*</span>
-                            </label>
-                            <p>{{ form.username }}</p>
-                        </div>
-
-                        <div class="field-wrap">
-                            <label>
-                                Mot de passe<span class="req">*</span>
-                            </label>
-                            <p>{{ form.password }}</p>
-                        </div>
-
-                        {# Assumes you setup the password_reset view in your URLconf #}
-                        <p class="forgot"><a href="{% url 'password_reset' %}">Mot de passe oublié ?</a></p>
-                        <button type="submit" class="button button-block">GO !</button>
-
+                        {% for field in form %}
+                            <p>
+                                {{ field.label_tag }}<br>
+                                {{ field }}
+                                {% for error in field.errors %}
+                                    <p style="color: red">{{ error }}</p>
+                                {% endfor %}
+                            </p>
+                        {% endfor %}
+                        <button type="submit">Sign up NOW</button>
                     </form>
-                </div>
             </div>
         </div>
     </section>

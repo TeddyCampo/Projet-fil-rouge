@@ -23,10 +23,15 @@
                                 <ul>
                                     <li><a href="/">Accueil</a></li>    <!-- Pointe sur localhost/ -->
                                     <li><a href="game">Jouer</a></li>   <!-- Pointe sur localhost/game -->
-                                    <li><a href="{% url 'login' %}">Se connecter</a></li>
                                     <li><a href="project">C'est quoi Alumni Educ?</a></li>
                                     <li><a href="profs">Pour les professeurs</a></li>							
                                     <li><a href="faq">F.A.Q</a></li>
+                                    {% if user.is_active %}
+                                        <li><a href="{% url 'logout' %}?next=/" class="connect" style="color: #436b67">Se déconnecter</a></li>
+                                    {% else %}
+                                        <li><a href="{% url 'login' %}" class="connect" style="color: #436b67">Se connecter</a></li>
+                                        <li><a href="signup" class="connect" style="color: #436b67">Nouvel utilisateur</a></li>
+                                    {% endif %}
                                 </ul>
                             </div>
                         </li>
