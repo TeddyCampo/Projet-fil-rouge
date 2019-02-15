@@ -22,10 +22,10 @@
                             <div id="menu">
                                 <ul>
                                     <li><a href="/">Accueil</a></li>    <!-- Pointe sur localhost/ -->
-                                    <li><a href="game">Jouer</a></li>   <!-- Pointe sur localhost/game -->
-                                    <li><a href="project">C'est quoi Alumni Educ?</a></li>
-                                    <li><a href="profs">Pour les professeurs</a></li>							
-                                    <li><a href="faq">F.A.Q</a></li>
+                                    <li><a href="/game">Jouer</a></li>   <!-- Pointe sur localhost/game -->
+                                    <li><a href="/project">C'est quoi Alumni Educ?</a></li>
+                                    <li><a href="/profs">Pour les professeurs</a></li>							
+                                    <li><a href="/faq">F.A.Q</a></li>
                                     {% if user.is_active %}
                                         <li><a href="{% url 'logout' %}?next=/" class="connect" style="color: #436b67">Se déconnecter</a></li>
                                     {% else %}
