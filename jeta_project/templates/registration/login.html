@@ -4,18 +4,17 @@
 {% load static %}
 
 {% if form.errors %}
-    <p>Your username and password didn't match. Please try again.</p>
-    <p>{{ form.errors }}</p>
+    <p style="color: red">Nom d'utilisateur ou mot de passe incorrect !</p>
+    <!-- <p>{{ form.errors }}</p> -->
 
 {% endif %}
 
 {% if next %}
 {% if user.is_authenticated %}
-    <p>Your account doesn't have access to this page.
-    To proceed, please login with an account that has access.</p>
+    <p style="color: red">Vous n'êtes pas autorisé à accéder à cette page.</p>
 
 {% else %}
-    <p>Please login to see this page.</p>
+    <p style="color: red">Connectez-vous pour afficher cette page.</p>
 
 {% endif %}
 {% endif %}
@@ -31,12 +30,12 @@
 
         <div class="form">
                 <ul class="tab-group">
-                    <li class="tab active"><a>S'inscrire</a></li>
-                    <li class="tab"><a>Se connecter</a></li>
+                    <li><a href="/signup">S'inscrire</a></li>
+                    <li class="tab active"><a>Se connecter</a></li>
                 </ul>
             <div>
                 <div id="login">
-                    <h1>Heureux de vous revoir ! :) </h1>
+                    <h1>Heureux de vous revoir ! </h1>
                     <form method="post" action="{% url 'login' %}">
                         {% csrf_token %}
                         <div class="field-wrap">

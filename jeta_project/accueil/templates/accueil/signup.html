@@ -32,7 +32,7 @@
         <div class="form">
             <ul class="tab-group">
                 <li class="tab active"><a>S'inscrire</a></li>
-                <li class="tab"><a>Se connecter</a></li>
+                <li><a href="/accounts/login">Se connecter</a></li>
             </ul>
 
             <div class="tab-content">
@@ -40,16 +40,38 @@
                     <h1>Formulaire d'inscription</h1>
                     <form method="post">
                         {% csrf_token %}
-                        {% for field in form %}
-                            <p>
-                                {{ field.label_tag }}<br>
-                                {{ field }}
-                                {% for error in field.errors %}
-                                    <p style="color: red">{{ error }}</p>
+
+                            <div class="field-wrap">
+                                <label>
+                                    Nom d'utilisateur<span class="req">*</span>
+                                </label>
+                                {{ form.username }}
+                                {% for error in form.username.errors %}
+                                <p style="color: red">{{ error }}</p>
                                 {% endfor %}
-                            </p>
-                        {% endfor %}
-                        <button type="submit">Valider</button>
+                            </div>
+                            
+                            <div class="field-wrap">
+                                <label>
+                                    Mot de passe<span class="req">*</span>
+                                </label>
+                                {{ form.password1 }}
+                                {% for error in form.password1.errors %}
+                                <p style="color: red">{{ error }}</p>
+                                {% endfor %}
+                            </div>
+
+                            <div class="field-wrap">
+                                <label>
+                                    Confirmation<span class="req">*</span>
+                                </label>
+                                {{ form.password2 }}
+                                {% for error in form.password2.errors %}
+                                <p style="color: red">{{ error }}</p>
+                                {% endfor %}
+                            </div>
+
+                        <button type="submit" class="button button-block">Valider</button>
                     </form>
             </div>
         </div>
