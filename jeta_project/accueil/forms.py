@@ -16,9 +16,6 @@ class ParagraphErrorList(ErrorList):
         return '<div class="errorlist">%s</div>' % ''.join(['<p class="small error">%s</p>' % e for e in self])
 
 class UserForm(UserCreationForm):
-    # username = CharField(max_length=30, required=True, help_text="make it cute")
-    # password = CharField(max_length=30, required=True, help_text="make it hard to crack")
-
     class Meta:
         model = User
         fields = ('username', 'password1', 'password2')

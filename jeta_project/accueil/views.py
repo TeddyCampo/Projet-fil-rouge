@@ -44,25 +44,22 @@ def signup(request):
             try:
                 with transaction.atomic():
                     user = User.objects.filter(username=username)
+                    
                     if not user.exists():
-                        # If a contact is not registered, create a new one.
-                        user = User.objects.create(
-                            username=username,
-                            password=password
-                        )
+                        user = User.objects.create(username=username)
+                        user.set_password(password)
+
                         player = Player.objects.create(
                             top_score = 0
                         )
                         player.save()
                     else:
                         user = user.first()
-                    # album = get_object_or_404(Album, id=album_id) #TODO
 
                     user.save()
                     return redirect('/')
 
             except IntegrityError:
-
                 form.errors['internal'] = "Une erreur interne est apparue. Merci de recommencer votre requête."
     else:
         form = UserForm()

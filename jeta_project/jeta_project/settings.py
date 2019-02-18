@@ -129,8 +129,9 @@ STATICFILES_DIRS = [
     # os.path.join(BASE_DIR, 'accueil/static'),
 ]
 
-#Parametre de redirection une fois le login valide:
+#Parametres de redirection login/logout:
 LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
 
 #Parametre pour rediriger un utilisateur vers la page de login s'il n'est pas connecté:
 # LOGIN_URL ='/login'
