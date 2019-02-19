@@ -1,9 +1,9 @@
 from django import forms
 from django.forms import ModelForm, TextInput, EmailInput, PasswordInput, CharField
 from django.forms.utils import ErrorList
-from .models import Player
-from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm
+from .models import CustomUser
+# from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 
 
 class ParagraphErrorList(ErrorList):
@@ -15,7 +15,12 @@ class ParagraphErrorList(ErrorList):
             return ''
         return '<div class="errorlist">%s</div>' % ''.join(['<p class="small error">%s</p>' % e for e in self])
 
-class UserForm(UserCreationForm):
+class CustomUserCreationForm(UserCreationForm):
     class Meta:
-        model = User
-        fields = ('username', 'password1', 'password2')
+        model = CustomUser
+        fields = ('username', 'password1', 'password2', 'top_score')
+
+class CustomUserChangeForm(UserChangeForm):
+    class Meta:
+        model = CustomUser
+        fields = ('username', 'top_score')

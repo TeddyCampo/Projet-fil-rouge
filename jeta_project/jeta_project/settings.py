@@ -86,6 +86,7 @@ DATABASES = {
     }
 }
 
+AUTH_USER_MODEL = 'accueil.CustomUser'
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
@@ -105,6 +106,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# AUTHENTICATION_BACKENDS = ('accueil.auth.CustomAuth',) ---- To add so that non-super users can connect
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
