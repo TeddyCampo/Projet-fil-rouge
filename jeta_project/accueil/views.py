@@ -44,19 +44,12 @@ def signup(request):
                     if not user.exists():
                         user = CustomUser.objects.create(username=username)
                         user.set_password(password)
-
-                        # user = CustomUser.objects.create(
-                        #     top_score = 0
-                        # )
                         user.save()
                         # login user
                         login(request, user)
-                        return redirect('/')
+                        return redirect('/game')
                     else:
                         user = user.first()
-
-                    # user.save()
-                    # return redirect('/')
 
             except IntegrityError:
                 form.errors['internal'] = "Une erreur interne est apparue. Merci de recommencer votre requête."

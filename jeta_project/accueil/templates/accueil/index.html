@@ -24,19 +24,19 @@
 		<div id="column">
 			<div id="boardOne">
 				<h4> Meilleurs Scores </h4>
-				<ul>
+				<ol>
 					{% for user in top_players_list %}
-					<li>{{ user.username }} /// {{ user.top_score }}</li>
+					<li>{{ user.username }} || {{ user.top_score }}</li>
 					{% endfor %}
-				</ul>
+				</ol>
 			</div>
 			<div id="boardTwo">
 				<h4> Derniers Inscrits </h4>
-				<ul>
+				<p>
 					{% for player in latest_players_list %}
-					<li>{{ player.username }} /// {{ player.date_joined }}</li>
+						{{ player.username }} || {{ player.date_joined }}<br/>
 					{% endfor %}
-				</ul>
+				</p>
 			</div>
 		</div>
 	</section>

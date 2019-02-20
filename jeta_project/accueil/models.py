@@ -30,19 +30,24 @@ class Theme(models.Model):
         return self.themeName
 
 
-class Level(models.Model):
-    levelName = models.CharField(max_length=200)
-    theme = models.ForeignKey(Theme, on_delete=models.CASCADE)
-    maxScore = models.IntegerField()
-    indexNumber = models.IntegerField()
+# class Level(models.Model):
+#     levelName = models.CharField(max_length=200)
+#     theme = models.ForeignKey(Theme, on_delete=models.CASCADE)
+#     maxScore = models.IntegerField()
+#     indexNumber = models.IntegerField()
 
-    def __str__(self):
-        return self.levelName
+#     def __str__(self):
+#         return self.levelName
 
 
 class Question(models.Model):
     questionText = models.CharField(max_length=200)
-    level = models.ForeignKey(Level, on_delete=models.CASCADE)
+    # level = models.ForeignKey(Level, on_delete=models.CASCADE)
+    theme = models.ForeignKey(Theme, on_delete=models.CASCADE)
+    index = models.IntegerField()
+
+    class Meta:
+        unique_together = ("theme", "index")
 
     def __str__(self):
         return self.questionText
@@ -58,7 +63,7 @@ class Answer(models.Model):
 
 class PlayerProgress(models.Model):
     player = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    level = models.ForeignKey(Level, on_delete=models.CASCADE)
+    theme = models.ForeignKey(Theme, on_delete=models.CASCADE)
     score = models.IntegerField()
 
     def __str__(self):
