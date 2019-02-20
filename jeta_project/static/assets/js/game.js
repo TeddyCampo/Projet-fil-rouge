@@ -185,7 +185,8 @@ function update() {
     arrows[index].setText("> ");
 
     if (cursors.left.isDown || cursors.right.isDown) {
-      // Do not do anything
+      down_is_down = false
+      up_is_down = false
     } else if (cursors.down.isDown) {
       down_is_down = true;
       up_is_down = false;
@@ -193,15 +194,15 @@ function update() {
       up_is_down = true;
       down_is_down = false;
     } else if (down_is_down && cursors.down.isUp) {
+      down_is_down = false
       arrows[index].setText("");
       index = (index + 1) % arrows.length;
       console.log(index);
-      down_is_down = false
     } else if (up_is_down && cursors.up.isUp) {
+      up_is_down = false
       arrows[index].setText("");
       index = (index + (arrows.length - 1)) % arrows.length;
       console.log(index);
-      up_is_down = false
     } else if (validate.isDown) {
       arrows[index].setText("");
       timer = 0;
@@ -301,6 +302,35 @@ function hitBomb(player, bomb) {
   player.setTint(0xff0000);
   player.anims.play("turn");
   announcement.setText("Dommage, tu es mort");
+  // using jQuery
+  function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+  }
+  var csrf_token = getCookie('csrftoken');
+
+  console.log(csrf_token)
+  $( canvas ).click(function () {
+      $.ajax({
+      url: '/update_counter/',
+      content: 'application/x-www-form-urlencoded',
+      data: {'csrfmiddlewaretoken': csrf_token, 'score': score},
+      type: 'POST'
+    }).done(function(response){
+      console.log(response)
+    })
+  })
   gameOver = true;
 }
 
@@ -317,6 +347,35 @@ function userChose(answers, count, my_this) {
 
     if (question_count === question_db.length) {
       announcement.setText("Felicitations\nTu as termine le niveau");
+      // using jQuery
+      function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+      }
+      var csrf_token = getCookie('csrftoken');
+
+      console.log(csrf_token)
+      $( canvas ).click(function () {
+          $.ajax({
+          url: '/update_counter/',
+          content: 'application/x-www-form-urlencoded',
+          data: {'csrfmiddlewaretoken': csrf_token, 'score': score},
+          type: 'POST'
+        }).done(function(response){
+          console.log(response)
+        })
+      })
       my_this.scene.pause();
     } else {
       announcement.setText("Tres bien!\n+10 points");

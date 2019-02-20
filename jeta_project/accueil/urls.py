@@ -9,5 +9,6 @@ urlpatterns = [
     path('profs', views.profs),
     path('faq', views.faq),
     path('game', views.game),
-    path('signup', views.signup)
+    path('signup', views.signup),
+    url(r'^update_counter/', views.update_counter)
 ]

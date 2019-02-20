@@ -1,8 +1,10 @@
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_protect
 from django.shortcuts import redirect
 from django.db import transaction
+from django.http import HttpResponse
 from .models import CustomUser
 from .forms import CustomUserCreationForm, ParagraphErrorList
 
@@ -58,3 +60,11 @@ def signup(request):
     context['form'] = form
     context['errors'] = form.errors.items()
     return render(request, 'accueil/signup.html', context)
+
+def update_counter(request):
+    message = ''
+    if request.method == "POST":
+        print("I received a post")
+        print("Score: ", request.POST['score'])
+        message = "message received, good work!"
+    return HttpResponse(message)
