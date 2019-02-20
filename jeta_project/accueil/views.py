@@ -1,4 +1,5 @@
 from django.shortcuts import render, get_object_or_404
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 from django.db import transaction
@@ -44,15 +45,18 @@ def signup(request):
                         user = CustomUser.objects.create(username=username)
                         user.set_password(password)
 
-                        user = CustomUser.objects.create(
-                            top_score = 0
-                        )
+                        # user = CustomUser.objects.create(
+                        #     top_score = 0
+                        # )
                         user.save()
+                        # login user
+                        login(request, user)
+                        return redirect('/')
                     else:
                         user = user.first()
 
-                    user.save()
-                    return redirect('/')
+                    # user.save()
+                    # return redirect('/')
 
             except IntegrityError:
                 form.errors['internal'] = "Une erreur interne est apparue. Merci de recommencer votre requête."

@@ -18,7 +18,7 @@ class ParagraphErrorList(ErrorList):
 class CustomUserCreationForm(UserCreationForm):
     class Meta:
         model = CustomUser
-        fields = ('username', 'password1', 'password2', 'top_score')
+        fields = ('username', 'password1', 'password2')
 
 class CustomUserChangeForm(UserChangeForm):
     class Meta:
