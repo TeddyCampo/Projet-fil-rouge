@@ -33,11 +33,9 @@
 			<div id="boardTwo">
 				<h4> Derniers Inscrits </h4>
 				<ul>
-					<li>Balezeman</li>
-					<li>Kevindu92</li>
-					<li>Toto42</li>
-					<li>Apopoloco</li>
-					<li>Fusator</li>
+					{% for player in latest_players_list %}
+					<li>{{ player.username }} /// {{ player.date_joined }}</li>
+					{% endfor %}
 				</ul>
 			</div>
 		</div>

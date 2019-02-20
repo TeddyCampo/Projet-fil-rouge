@@ -1,4 +1,5 @@
 from django.urls import path
+from django.conf.urls import include, url
 from . import views
 
 urlpatterns = [
@@ -8,5 +9,5 @@ urlpatterns = [
     path('profs', views.profs),
     path('faq', views.faq),
     path('game', views.game),
-    path('sign', views.sign),
+    path('signup', views.signup)
 ]
