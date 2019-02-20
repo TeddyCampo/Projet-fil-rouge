@@ -86,6 +86,7 @@ DATABASES = {
     }
 }
 
+AUTH_USER_MODEL = 'accueil.CustomUser'
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
@@ -105,6 +106,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# AUTHENTICATION_BACKENDS = ('accueil.auth.CustomAuth',)
+# AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.AllowAllUsersModelBackend',)
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
@@ -128,3 +131,10 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
     # os.path.join(BASE_DIR, 'accueil/static'),
 ]
+
+#Parametres de redirection login/logout:
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+
+#Parametre pour rediriger un utilisateur vers la page de login s'il n'est pas connecté:
+# LOGIN_URL ='/login'

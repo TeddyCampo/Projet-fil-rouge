@@ -1,11 +1,17 @@
 {% extends "main.html" %}
 {% block title %}Jouer{% endblock %}
 	{% block content %}
+	{% if user.is_authenticated %}
+	<h1>Hi {{ user.username }}!</h1>
+	{% else %}
+	<p>You are not logged in</p>
+	<a href="{% url 'login' %}">LOGIN</a>
+	{% endif %}
 	{% load static %}
 		<!-- Page Wrapper -->
 			<!-- Main -->
 			<script src="https://cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js"></script>
-			<style src="{% static "assets/css/game.css" %}"></style>"
+			<style src="{% static "assets/css/game.css" %}"></style>
 			<link rel="stylesheet" href="{% static "assets/css/game.css" %}"/>
 			<article id="main">
 				<section class="wrapper style5">

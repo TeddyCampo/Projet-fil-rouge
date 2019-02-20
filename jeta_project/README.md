@@ -10,7 +10,6 @@
 - Nom utilisateur: Admingame
 - pwd: Admingame
 
-\*Prof:
+\*Players:
 
-- Nom utilisateur: Teacher
-- pwd: prof12345
+- pwd (commun à tous les joueurs pour les tests): gamepassword
