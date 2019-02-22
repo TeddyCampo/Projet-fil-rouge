@@ -42,7 +42,7 @@ let down_is_down;
 let up_is_down;
 
 // AJAX Request for user and score
-function get_score () {
+function get_and_show_score (instance) {
   $(function () {
     $.ajax({
     url: '/get_score/',
@@ -52,6 +52,10 @@ function get_score () {
     }).done(function(response){
       console.log(response.score)
       score = response.score
+      scoreText = instance.add.text(16, 50, ("Score: " + score), {
+        fontSize: "25px",
+        fill: "#000"
+      });
     })
     })
     return score   
@@ -66,27 +70,30 @@ function get_q_and_a () {
       dataType: 'json'
     }).done(function(response){
       console.log(response)
+      q_and_a = response
+      question_db = q_and_a.questions
+      answer_db = q_and_a.answers
     })
   })
+  return q_and_a
 }
 
-// Example data from the database
-let question_db = [
-  { id: 0, chapter: 1, text: "Quelle est la capitale de la France ?" },
-  { id: 1, chapter: 1, text: "Quelle est la capitale des Etats-Unis ?" },
-  { id: 2, chapter: 1, text: "Quelle est la capitale de la Lithuanie ?" }
-];
-let answer_db = [
-  { id: 1, q_id: 0, text: "Pas de Calais", correct: false },
-  { id: 2, q_id: 0, text: "Marseille", correct: false },
-  { id: 3, q_id: 0, text: "Paris", correct: true },
-  { id: 4, q_id: 1, text: "New York City", correct: false },
-  { id: 5, q_id: 1, text: "Washington, D.C.", correct: true },
-  { id: 6, q_id: 1, text: "Little Rock", correct: false },
-  { id: 7, q_id: 2, text: "Riga", correct: false },
-  { id: 8, q_id: 2, text: "Vilnius", correct: true },
-  { id: 9, q_id: 2, text: "Kalingrad", correct: false }
-];
+// Getting cookie so that CSRF token can be made later for Post request
+function getCookie(name) {
+  var cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+      var cookies = document.cookie.split(';');
+      for (var i = 0; i < cookies.length; i++) {
+          var cookie = jQuery.trim(cookies[i]);
+          // Does this cookie string begin with the name we want?
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+          }
+      }
+  }
+  return cookieValue;
+}
 
 // Creation de l'objet
 let game = new Phaser.Game(config);
@@ -101,8 +108,7 @@ function preload() {
     frameWidth: 32,
     frameHeight: 48
   });
-  score = get_score()
-  // q_and_a = get_q_and_a()
+  q_and_a = get_q_and_a()
 }
 
 // Creations des objets du jeu
@@ -174,10 +180,7 @@ function create() {
   bombs = this.physics.add.group();
 
   // Affichage du score
-  scoreText = this.add.text(16, 50, ("Score: " + score), {
-    fontSize: "25px",
-    fill: "#000"
-  });
+  score = get_and_show_score(this)
 
   // Gestion des collisions
   this.physics.add.collider(player, platforms);
@@ -301,7 +304,7 @@ function collectStar(player, star) {
     let questionID = question_db[question_count].id;
 
     // Une question choisie par le parametre question_count
-    question = this.add.text(120, 100, question_db[question_count].text, {
+    question = this.add.text(120, 100, question_db[question_count].questionText, {
       fontSize: "25px",
       fill: "#000"
     });
@@ -310,10 +313,10 @@ function collectStar(player, star) {
     let y_position = 130;
     answers = [];
     answer_db.forEach(obj => {
-      if (obj.q_id === questionID) {
+      if (obj.question === questionID) {
         answers.push({
           database: obj,
-          shown: this.add.text(150, y_position, obj.text, {
+          shown: this.add.text(150, y_position, obj.answerText, {
             fontSize: "20px",
             fill: "#000"
           })
@@ -334,22 +337,7 @@ function hitBomb(player, bomb) {
   player.setTint(0xff0000);
   player.anims.play("turn");
   announcement.setText("Dommage, tu es mort");
-  // using jQuery
-  function getCookie(name) {
-    var cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        var cookies = document.cookie.split(';');
-        for (var i = 0; i < cookies.length; i++) {
-            var cookie = jQuery.trim(cookies[i]);
-            // Does this cookie string begin with the name we want?
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-  }
+
   var csrf_token = getCookie('csrftoken');
 
   console.log(csrf_token)
@@ -372,29 +360,14 @@ function userChose(answers, count, my_this) {
   answers[1].shown.setText("");
   answers[2].shown.setText("");
   question.text = "";
-  if (answers[count].database.correct) {
+  if (answers[count].database.isCorrect) {
     score += 10;
     scoreText.setText("Score: " + score);
     question_count += 1;
 
     if (question_count === question_db.length) {
       announcement.setText("Felicitations\nTu as termine le niveau");
-      // using jQuery
-      function getCookie(name) {
-        var cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            var cookies = document.cookie.split(';');
-            for (var i = 0; i < cookies.length; i++) {
-                var cookie = jQuery.trim(cookies[i]);
-                // Does this cookie string begin with the name we want?
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-      }
+
       var csrf_token = getCookie('csrftoken');
 
       console.log(csrf_token)
@@ -413,8 +386,8 @@ function userChose(answers, count, my_this) {
       announcement.setText("Tres bien!\n+10 points");
     }
   } else {
-    announcement.setText("Mauvaise reponse!\n-5 points");
-    score -= 5;
+    announcement.setText("Mauvaise reponse!\n-40 points");
+    score -= 40;
     scoreText.setText("Score: " + score);
     function restart() {
       player.x = 100;

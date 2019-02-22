@@ -29,17 +29,6 @@ class Theme(models.Model):
     def __str__(self):
         return self.themeName
 
-
-# class Level(models.Model):
-#     levelName = models.CharField(max_length=200)
-#     theme = models.ForeignKey(Theme, on_delete=models.CASCADE)
-#     maxScore = models.IntegerField()
-#     indexNumber = models.IntegerField()
-
-#     def __str__(self):
-#         return self.levelName
-
-
 class Question(models.Model):
     questionText = models.CharField(max_length=200)
     # level = models.ForeignKey(Level, on_delete=models.CASCADE)

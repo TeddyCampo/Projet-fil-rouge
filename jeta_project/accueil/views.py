@@ -1,12 +1,13 @@
-from django.shortcuts import render, get_object_or_404
-from django.contrib.auth import authenticate, login
+from django.shortcuts import render
+from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.csrf import csrf_protect
 from django.shortcuts import redirect
 from django.db import transaction
 from django.http import HttpResponse, JsonResponse
 from .models import CustomUser, Field, Theme, Question, Answer
+from .serializers import QuestionSerializer, AnswerSerializer, PlayerProgressSerializer
 from .forms import CustomUserCreationForm, ParagraphErrorList
+from rest_framework import serializers
 
 def accueil(request):
     return render(request, 'accueil/index.html')
@@ -64,20 +65,16 @@ def signup(request):
 def update_score(request):
     message = ''
     if request.method == "POST":
-        print("I received a post")
-        print("Score: ", request.POST['score'])
-        message = "message received, good work!"
         user = request.user
         score = request.POST["score"]
         user.top_score = score
         user.save()
+        message = "Score received: " + score
     return HttpResponse(message)
 
 def get_score(request):
-    message = ''
     if request.method == "GET":
         print("I received a get")
-        message = "This will be data..."
         username = request.user.username
         user = CustomUser.objects.get(username=username)
         score = user.top_score
@@ -91,9 +88,10 @@ def get_q_and_a(request):
         answers = []
         some_questions = Question.objects.filter(theme=theme.pk)
         for q in some_questions:
-            questions.append(q)
+            serializer = QuestionSerializer(q)
+            questions.append(serializer.data)
             some_answers = Answer.objects.filter(question=q.pk)
             for a in some_answers:
-                answers.append(a) 
-        print(answers)
-    return JsonResponse({"questions": questions, "answers": answers}, safe=False)
+                answerserializer = AnswerSerializer(a)
+                answers.append(answerserializer.data)
+    return JsonResponse({"questions": questions, "answers": answers})
