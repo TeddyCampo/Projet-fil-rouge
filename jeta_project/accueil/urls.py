@@ -10,5 +10,7 @@ urlpatterns = [
     path('faq', views.faq),
     path('game', views.game),
     path('signup', views.signup),
-    url(r'^update_counter/', views.update_counter)
+    url(r'^update_score/', views.update_score),
+    url(r'^get_score/', views.get_score),
+    url(r'^get_q_and_a/', views.get_q_and_a)
 ]

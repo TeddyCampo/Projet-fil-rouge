@@ -27,6 +27,7 @@ let score = 0;
 let gameOver = false;
 let scoreText;
 let question;
+let q_and_a;
 let starCount = 0;
 let progress;
 let canvas;
@@ -39,6 +40,35 @@ let validate;
 let index = 0;
 let down_is_down;
 let up_is_down;
+
+// AJAX Request for user and score
+function get_score () {
+  $(function () {
+    $.ajax({
+    url: '/get_score/',
+    // content: 'application/x-www-form-urlencoded',
+    type: 'GET',
+    dataType: 'json'
+    }).done(function(response){
+      console.log(response.score)
+      score = response.score
+    })
+    })
+    return score   
+}
+
+// AJAX Request for questions and answers from database
+function get_q_and_a () {
+  $(function () {
+    $.ajax({
+      url: '/get_q_and_a/',
+      type: 'GET',
+      dataType: 'json'
+    }).done(function(response){
+      console.log(response)
+    })
+  })
+}
 
 // Example data from the database
 let question_db = [
@@ -71,6 +101,8 @@ function preload() {
     frameWidth: 32,
     frameHeight: 48
   });
+  score = get_score()
+  // q_and_a = get_q_and_a()
 }
 
 // Creations des objets du jeu
@@ -142,7 +174,7 @@ function create() {
   bombs = this.physics.add.group();
 
   // Affichage du score
-  scoreText = this.add.text(16, 50, "Score: 0", {
+  scoreText = this.add.text(16, 50, ("Score: " + score), {
     fontSize: "25px",
     fill: "#000"
   });
@@ -321,9 +353,9 @@ function hitBomb(player, bomb) {
   var csrf_token = getCookie('csrftoken');
 
   console.log(csrf_token)
-  $( canvas ).click(function () {
+  $(function () {
       $.ajax({
-      url: '/update_counter/',
+      url: '/update_score/',
       content: 'application/x-www-form-urlencoded',
       data: {'csrfmiddlewaretoken': csrf_token, 'score': score},
       type: 'POST'
@@ -366,9 +398,9 @@ function userChose(answers, count, my_this) {
       var csrf_token = getCookie('csrftoken');
 
       console.log(csrf_token)
-      $( canvas ).click(function () {
+      $(function () {
           $.ajax({
-          url: '/update_counter/',
+          url: '/update_score/',
           content: 'application/x-www-form-urlencoded',
           data: {'csrfmiddlewaretoken': csrf_token, 'score': score},
           type: 'POST'

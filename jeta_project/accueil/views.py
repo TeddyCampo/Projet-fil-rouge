@@ -4,8 +4,8 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_protect
 from django.shortcuts import redirect
 from django.db import transaction
-from django.http import HttpResponse
-from .models import CustomUser
+from django.http import HttpResponse, JsonResponse
+from .models import CustomUser, Field, Theme, Question, Answer
 from .forms import CustomUserCreationForm, ParagraphErrorList
 
 def accueil(request):
@@ -61,10 +61,39 @@ def signup(request):
     context['errors'] = form.errors.items()
     return render(request, 'accueil/signup.html', context)
 
-def update_counter(request):
+def update_score(request):
     message = ''
     if request.method == "POST":
         print("I received a post")
         print("Score: ", request.POST['score'])
         message = "message received, good work!"
+        user = request.user
+        score = request.POST["score"]
+        user.top_score = score
+        user.save()
     return HttpResponse(message)
+
+def get_score(request):
+    message = ''
+    if request.method == "GET":
+        print("I received a get")
+        message = "This will be data..."
+        username = request.user.username
+        user = CustomUser.objects.get(username=username)
+        score = user.top_score
+    return JsonResponse({"score": score})
+
+def get_q_and_a(request):
+    if request.method == "GET":
+        field = Field.objects.get(pk=1)
+        theme = Theme.objects.filter(field=field.pk).first()
+        questions = []
+        answers = []
+        some_questions = Question.objects.filter(theme=theme.pk)
+        for q in some_questions:
+            questions.append(q)
+            some_answers = Answer.objects.filter(question=q.pk)
+            for a in some_answers:
+                answers.append(a) 
+        print(answers)
+    return JsonResponse({"questions": questions, "answers": answers}, safe=False)
