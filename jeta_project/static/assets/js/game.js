@@ -75,7 +75,7 @@ function get_q_and_a () {
       answer_db = q_and_a.answers
     })
   })
-  return q_and_a
+  // return q_and_a
 }
 
 // Getting cookie so that CSRF token can be made later for Post request
@@ -95,6 +95,23 @@ function getCookie(name) {
   return cookieValue;
 }
 
+// AJAX Post request for sending score to database
+function send_score (score) {
+  var csrf_token = getCookie('csrftoken');
+
+  console.log(csrf_token)
+  $(function () {
+      $.ajax({
+      url: '/update_score/',
+      content: 'application/x-www-form-urlencoded',
+      data: {'csrfmiddlewaretoken': csrf_token, 'score': score},
+      type: 'POST'
+    }).done(function(response){
+      console.log(response)
+    })
+  })
+}
+
 // Creation de l'objet
 let game = new Phaser.Game(config);
 
@@ -108,7 +125,7 @@ function preload() {
     frameWidth: 32,
     frameHeight: 48
   });
-  q_and_a = get_q_and_a()
+  get_q_and_a()
 }
 
 // Creations des objets du jeu
@@ -338,19 +355,8 @@ function hitBomb(player, bomb) {
   player.anims.play("turn");
   announcement.setText("Dommage, tu es mort");
 
-  var csrf_token = getCookie('csrftoken');
+  send_score(score)
 
-  console.log(csrf_token)
-  $(function () {
-      $.ajax({
-      url: '/update_score/',
-      content: 'application/x-www-form-urlencoded',
-      data: {'csrfmiddlewaretoken': csrf_token, 'score': score},
-      type: 'POST'
-    }).done(function(response){
-      console.log(response)
-    })
-  })
   gameOver = true;
 }
 
@@ -367,20 +373,8 @@ function userChose(answers, count, my_this) {
 
     if (question_count === question_db.length) {
       announcement.setText("Felicitations\nTu as termine le niveau");
+      send_score(score)
 
-      var csrf_token = getCookie('csrftoken');
-
-      console.log(csrf_token)
-      $(function () {
-          $.ajax({
-          url: '/update_score/',
-          content: 'application/x-www-form-urlencoded',
-          data: {'csrfmiddlewaretoken': csrf_token, 'score': score},
-          type: 'POST'
-        }).done(function(response){
-          console.log(response)
-        })
-      })
       my_this.scene.pause();
     } else {
       announcement.setText("Tres bien!\n+10 points");
