@@ -1,10 +1,13 @@
-from django.shortcuts import render, get_object_or_404
-from django.contrib.auth import authenticate, login
+from django.shortcuts import render
+from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 from django.db import transaction
-from .models import CustomUser
+from django.http import HttpResponse, JsonResponse
+from .models import CustomUser, Field, Theme, Question, Answer
+from .serializers import QuestionSerializer, AnswerSerializer, PlayerProgressSerializer
 from .forms import CustomUserCreationForm, ParagraphErrorList
+from rest_framework import serializers
 
 def accueil(request):
     return render(request, 'accueil/index.html')
@@ -44,19 +47,12 @@ def signup(request):
                     if not user.exists():
                         user = CustomUser.objects.create(username=username)
                         user.set_password(password)
-
-                        # user = CustomUser.objects.create(
-                        #     top_score = 0
-                        # )
                         user.save()
                         # login user
                         login(request, user)
-                        return redirect('/')
+                        return redirect('/game')
                     else:
                         user = user.first()
-
-                    # user.save()
-                    # return redirect('/')
 
             except IntegrityError:
                 form.errors['internal'] = "Une erreur interne est apparue. Merci de recommencer votre requête."
@@ -65,3 +61,37 @@ def signup(request):
     context['form'] = form
     context['errors'] = form.errors.items()
     return render(request, 'accueil/signup.html', context)
+
+def update_score(request):
+    message = ''
+    if request.method == "POST":
+        user = request.user
+        score = request.POST["score"]
+        user.top_score = score
+        user.save()
+        message = "Score received: " + score
+    return HttpResponse(message)
+
+def get_score(request):
+    if request.method == "GET":
+        print("I received a get")
+        username = request.user.username
+        user = CustomUser.objects.get(username=username)
+        score = user.top_score
+    return JsonResponse({"score": score})
+
+def get_q_and_a(request):
+    if request.method == "GET":
+        field = Field.objects.get(pk=1)
+        theme = Theme.objects.filter(field=field.pk).first()
+        questions = []
+        answers = []
+        some_questions = Question.objects.filter(theme=theme.pk)
+        for q in some_questions:
+            serializer = QuestionSerializer(q)
+            questions.append(serializer.data)
+            some_answers = Answer.objects.filter(question=q.pk)
+            for a in some_answers:
+                answerserializer = AnswerSerializer(a)
+                answers.append(answerserializer.data)
+    return JsonResponse({"questions": questions, "answers": answers})

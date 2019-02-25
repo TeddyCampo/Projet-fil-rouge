@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_extensions_shell',
+    'rest_framework'
 ]
 
 MIDDLEWARE = [
@@ -133,7 +134,7 @@ STATICFILES_DIRS = [
 ]
 
 #Parametres de redirection login/logout:
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/game'
 LOGOUT_REDIRECT_URL = '/'
 
 #Parametre pour rediriger un utilisateur vers la page de login s'il n'est pas connecté:
