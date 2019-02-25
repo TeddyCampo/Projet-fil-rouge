@@ -65,33 +65,45 @@ def signup(request):
 def update_score(request):
     message = ''
     if request.method == "POST":
+        """ Get the current player and save his new score """
         user = request.user
         score = request.POST["score"]
         user.top_score = score
         user.save()
         message = "Score received: " + score
+        """ Just a message to check if score correctly saved """
     return HttpResponse(message)
 
 def get_score(request):
     if request.method == "GET":
-        print("I received a get")
+        print("I received a score request !")
+        """ Get the name of the current player """
         username = request.user.username
         user = CustomUser.objects.get(username=username)
+        """ Get his score from the database """
         score = user.top_score
     return JsonResponse({"score": score})
 
 def get_q_and_a(request):
     if request.method == "GET":
+        print("I received a q_and_a request !")
+        """ Get the field from the DB (equal to 1 because there is only Geography) """
         field = Field.objects.get(pk=1)
+        """ Get the theme related to the field ("first()" because only one theme) """
         theme = Theme.objects.filter(field=field.pk).first()
         questions = []
         answers = []
+        """ Get the questions related to the theme """
         some_questions = Question.objects.filter(theme=theme.pk)
+        """ Serialize the questions into a json object and push them in an array """
         for q in some_questions:
-            serializer = QuestionSerializer(q)
-            questions.append(serializer.data)
+            serialized_question = QuestionSerializer(q)
+            questions.append(serialized_question.data)
+            """ Get the answers related to the questions """
             some_answers = Answer.objects.filter(question=q.pk)
+            """ Serialize the answers and push in array """
             for a in some_answers:
-                answerserializer = AnswerSerializer(a)
-                answers.append(answerserializer.data)
+                serialized_answer = AnswerSerializer(a)
+                answers.append(serialized_answer.data)
+    """ Return a json object with both questions and answers arrays """
     return JsonResponse({"questions": questions, "answers": answers})

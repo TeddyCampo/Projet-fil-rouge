@@ -41,7 +41,7 @@ let index = 0;
 let down_is_down;
 let up_is_down;
 
-// AJAX Request for user and score
+// AJAX Request for user and score from database
 function get_and_show_score (instance) {
   $(function () {
     $.ajax({
@@ -49,9 +49,12 @@ function get_and_show_score (instance) {
     // content: 'application/x-www-form-urlencoded',
     type: 'GET',
     dataType: 'json'
+    /* AJAX request call the view "get_score" which send back a json object from the database*/
     }).done(function(response){
       console.log(response.score)
+    /* The json object sent by the view has a "score" property with a value.*/
       score = response.score
+    /* Store the score in a new variable scoreText to display it in the game window. */
       scoreText = instance.add.text(16, 50, ("Score: " + score), {
         fontSize: "25px",
         fill: "#000"
@@ -68,6 +71,7 @@ function get_q_and_a () {
       url: '/get_q_and_a/',
       type: 'GET',
       dataType: 'json'
+    /* AJAX request call the view "get_score" which send back a json object from the database*/
     }).done(function(response){
       console.log(response)
       q_and_a = response
