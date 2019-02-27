@@ -12,5 +12,6 @@ urlpatterns = [
     path('signup', views.signup),
     url(r'^update_score/', views.update_score),
     url(r'^get_score/', views.get_score),
-    url(r'^get_q_and_a/', views.get_q_and_a)
+    url(r'^get_q_and_a/', views.get_q_and_a),
+    url(r'^get_next_theme', views.get_next_theme)
 ]

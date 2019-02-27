@@ -5,9 +5,10 @@ from django.shortcuts import redirect
 from django.db import transaction
 from django.http import HttpResponse, JsonResponse
 from .models import CustomUser, Field, Theme, Question, Answer
-from .serializers import QuestionSerializer, AnswerSerializer, PlayerProgressSerializer
+from .serializers import QuestionSerializer, AnswerSerializer, ThemeSerializer
 from .forms import CustomUserCreationForm, ParagraphErrorList
 from rest_framework import serializers
+import random
 
 def accueil(request):
     return render(request, 'accueil/index.html')
@@ -90,11 +91,30 @@ def get_q_and_a(request):
         """ Get the field from the DB (equal to 1 because there is only Geography) """
         field = Field.objects.get(pk=1)
         """ Get the theme related to the field ("first()" because only one theme) """
-        theme = Theme.objects.filter(field=field.pk).first()
+        username = request.user.username
+        # user = CustomUser.objects.get(username=username)
+
+        userThemes = Theme.objects.filter(customuser__username__contains=username)
+        allThemes = Theme.objects.all()
+        if userThemes.count() == allThemes.count():
+            # random theme chosen
+            randomPK = random.randint(1, allThemes.count())
+            print(randomPK)
+            # Output single theme in order to do question and answer searches
+            themeToUse = allThemes.get(pk=randomPK)
+            print(themeToUse.themeName)
+        else:
+            for themeDone in userThemes:
+                allThemes = allThemes.exclude(pk=themeDone.pk)
+            themeToUse = allThemes.first()
+            print(themeToUse.themeName)
+        
+        serialized_theme = ThemeSerializer(themeToUse)
+
         questions = []
         answers = []
         """ Get the questions related to the theme """
-        some_questions = Question.objects.filter(theme=theme.pk)
+        some_questions = Question.objects.filter(theme=themeToUse.pk)
         """ Serialize the questions into a json object and push them in an array """
         for q in some_questions:
             serialized_question = QuestionSerializer(q)
@@ -106,4 +126,9 @@ def get_q_and_a(request):
                 serialized_answer = AnswerSerializer(a)
                 answers.append(serialized_answer.data)
     """ Return a json object with both questions and answers arrays """
-    return JsonResponse({"questions": questions, "answers": answers})
+    return JsonResponse({"questions": questions, "answers": answers, "theme": serialized_theme.data})
+
+def get_next_theme(request):
+    themeSent = request.GET.get('theme', '')
+    print(themeSent)
+    return HttpResponse(themeSent)

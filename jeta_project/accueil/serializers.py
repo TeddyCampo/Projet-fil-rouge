@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Question, Answer, PlayerProgress
+from .models import Question, Answer, Theme
 
 class QuestionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -11,7 +11,7 @@ class AnswerSerializer(serializers.ModelSerializer):
         model = Answer
         fields = '__all__'
 
-class PlayerProgressSerializer(serializers.ModelSerializer):
+class ThemeSerializer(serializers.ModelSerializer):
     class Meta:
-        model = PlayerProgress
+        model = Theme
         fields = '__all__'

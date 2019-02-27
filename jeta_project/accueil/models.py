@@ -6,15 +6,6 @@ from django.contrib.auth.models import AbstractUser
 
 import datetime
 
-class CustomUser(AbstractUser):
-    top_score = models.IntegerField('high score', default=0)
-    
-    def __str__(self):
-        return self.username
-
-    def was_published_recently(self):
-        return self.date_joined >= timezone.now() - datetime.timedelta(days=1)
-
 class Field(models.Model):
     fieldName = models.CharField(max_length=200)
 
@@ -50,10 +41,21 @@ class Answer(models.Model):
     def __str__(self):
         return self.answerText
 
+class CustomUser(AbstractUser):
+    top_score = models.IntegerField('high score', default=0)
+    themes = models.ManyToManyField(Theme)
+    
+    def __str__(self):
+        return self.username
+
+    def was_published_recently(self):
+        return self.date_joined >= timezone.now() - datetime.timedelta(days=1)
+
 class PlayerProgress(models.Model):
     player = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    theme = models.ForeignKey(Theme, on_delete=models.CASCADE)
+    # theme = models.ForeignKey(Theme, on_delete=models.CASCADE)
     score = models.IntegerField()
+    themes = models.ManyToManyField(Theme)
 
     def __str__(self):
         return self.player.username, self.score

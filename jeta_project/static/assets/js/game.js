@@ -28,10 +28,11 @@ let gameOver = false;
 let scoreText;
 let question;
 let q_and_a;
+let theme_title;
 let starCount = 0;
 let progress;
 let canvas;
-let question_count = 0;
+let questionCount = 0;
 let answers = [];
 let arrows = [];
 let announcement;
@@ -46,7 +47,6 @@ function get_and_show_score (instance) {
   $(function () {
     $.ajax({
     url: '/get_score/',
-    // content: 'application/x-www-form-urlencoded',
     type: 'GET',
     dataType: 'json'
     /* AJAX request call the view "get_score" which send back a json object from the database*/
@@ -65,7 +65,7 @@ function get_and_show_score (instance) {
 }
 
 // AJAX Request for questions and answers from database
-function get_q_and_a () {
+function get_q_and_a (instance) {
   $(function () {
     $.ajax({
       url: '/get_q_and_a/',
@@ -77,12 +77,15 @@ function get_q_and_a () {
       q_and_a = response
       question_db = q_and_a.questions
       answer_db = q_and_a.answers
+      theme_title = q_and_a.theme.themeName
+
+      // Affichage du progres
+      progress = instance.add.text(16, 16, theme_title, { fontSize: "25px", fill: "#000" });
     })
   })
-  // return q_and_a
 }
 
-// Getting cookie so that CSRF token can be made later for Post request
+// Get cookie so that CSRF token can be made later for Post request
 function getCookie(name) {
   var cookieValue = null;
   if (document.cookie && document.cookie !== '') {
@@ -116,6 +119,29 @@ function send_score (score) {
   })
 }
 
+function get_next_theme() {
+  finishedTheme = q_and_a.theme.id
+  $(function () {
+    $.ajax({
+      url: `/get_next_theme?theme=${finishedTheme}`,
+      type: 'GET',
+      dataType: 'json'
+    /* AJAX request call the view "get_score" which send back a json object from the database*/
+    }).done(function(response){
+      console.log(response)
+      q_and_a = response
+      question_db = q_and_a.questions
+      answer_db = q_and_a.answers
+      theme_title = q_and_a.theme.themeName
+
+      // Affichage du progres
+      progress.setText(theme_title);
+    })
+  })
+  // send_score()
+  // reset_game()
+}
+
 // Creation de l'objet
 let game = new Phaser.Game(config);
 
@@ -129,7 +155,6 @@ function preload() {
     frameWidth: 32,
     frameHeight: 48
   });
-  get_q_and_a()
 }
 
 // Creations des objets du jeu
@@ -203,6 +228,9 @@ function create() {
   // Affichage du score
   score = get_and_show_score(this)
 
+  // Get questions, answers, theme and display theme
+  get_q_and_a(this)
+
   // Gestion des collisions
   this.physics.add.collider(player, platforms);
   this.physics.add.collider(stars, platforms);
@@ -217,10 +245,6 @@ function create() {
   // Canvas
   canvas = document.getElementsByTagName("canvas");
   canvas = canvas[0];
-
-  // Affichage du progres
-  let chapter = "Les Capitales: Niveau 1"; // Pulled from database
-  progress = this.add.text(16, 16, chapter, { fontSize: "25px", fill: "#000" });
 
   // announcement message
   announcement = this.add.text(200, 130, "", {
@@ -302,30 +326,16 @@ function collectStar(player, star) {
     stars.children.iterate(function(child) {
       child.enableBody(true, child.x, 0, true, true);
     });
-
-    // Creation de la bombe a une hauteur aleatoire mais toujours a l'oppose du joueur
-    let x =
-      player.x < 400
-        ? Phaser.Math.Between(400, 800)
-        : Phaser.Math.Between(0, 400);
-
-    // Creation d'une bombe
-    let bomb = bombs.create(x, 16, "bomb");
-    bomb.setBounce(1);
-    bomb.setCollideWorldBounds(true);
-    bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
-    // Suppression de la gravite
-    bomb.allowGravity = false;
   }
   // Affiche la question est ses reponses
   else if (starCount % 3 === 0) {
     announcement.setText("");
     this.physics.pause();
 
-    let questionID = question_db[question_count].id;
+    let questionID = question_db[questionCount].id;
 
-    // Une question choisie par le parametre question_count
-    question = this.add.text(120, 100, question_db[question_count].questionText, {
+    // Une question choisie par le parametre questionCount
+    question = this.add.text(120, 100, question_db[questionCount].questionText, {
       fontSize: "25px",
       fill: "#000"
     });
@@ -373,26 +383,36 @@ function userChose(answers, count, my_this) {
   if (answers[count].database.isCorrect) {
     score += 10;
     scoreText.setText("Score: " + score);
-    question_count += 1;
+    questionCount += 1;
 
-    if (question_count === question_db.length) {
+    if (questionCount === question_db.length) {
       announcement.setText("Felicitations\nTu as termine le niveau");
       send_score(score)
 
       my_this.scene.pause();
+      get_next_theme()
+      // 
     } else {
       announcement.setText("Tres bien!\n+10 points");
     }
   } else {
-    announcement.setText("Mauvaise reponse!\n-40 points");
-    score -= 40;
+    announcement.setText("Mauvaise reponse!\n-35 points");
+    score -= 35;
     scoreText.setText("Score: " + score);
-    function restart() {
-      player.x = 100;
-      player.y = 450;
-      question_count = 0;
-    }
-    restart();
+    questionCount = 0;
+
+    // Creation de la bombe a une hauteur aleatoire mais toujours a l'oppose du joueur
+    let x =
+      player.x < 400
+        ? Phaser.Math.Between(400, 800)
+        : Phaser.Math.Between(0, 400);
+    // Creation d'une bombe
+    let bomb = bombs.create(x, 16, "bomb");
+    bomb.setBounce(1);
+    bomb.setCollideWorldBounds(true);
+    bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
+    // Suppression de la gravite
+    bomb.allowGravity = false;
   }
   index = 0;
   questionnaire = null;
