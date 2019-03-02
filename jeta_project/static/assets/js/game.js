@@ -27,6 +27,7 @@ let score = 0;
 let gameOver = false;
 let scoreText;
 let question;
+let query;
 let q_and_a;
 let theme_title;
 let starCount = 0;
@@ -36,11 +37,13 @@ let questionCount = 0;
 let answers = [];
 let arrows = [];
 let announcement;
+let continueGame;
 let questionnaire;
 let validate;
 let index = 0;
 let down_is_down;
 let up_is_down;
+let validate_is_down;
 
 // AJAX Request for user and score from database
 function get_and_show_score(instance) {
@@ -66,9 +69,15 @@ function get_and_show_score(instance) {
 
 // AJAX Request for questions and answers from database
 function get_q_and_a(instance) {
+  try {
+    finishedTheme = q_and_a.theme.id;
+    query = `?theme=${finishedTheme}`;
+  } catch {
+    query = ``;
+  }
   $(function() {
     $.ajax({
-      url: "/get_q_and_a/",
+      url: `/get_q_and_a/${query}`,
       type: "GET",
       dataType: "json"
       /* AJAX request call the view "get_score" which send back a json object from the database*/
@@ -118,27 +127,6 @@ function send_score(score) {
       type: "POST"
     }).done(function(response) {
       console.log(response);
-    });
-  });
-}
-
-function get_next_theme() {
-  finishedTheme = q_and_a.theme.id;
-  $(function() {
-    $.ajax({
-      url: `/get_next_theme?theme=${finishedTheme}`,
-      type: "GET",
-      dataType: "json"
-      /* AJAX request call the view "get_score" which send back a json object from the database*/
-    }).done(function(response) {
-      console.log(response);
-      q_and_a = response;
-      question_db = q_and_a.questions;
-      answer_db = q_and_a.answers;
-      theme_title = q_and_a.theme.themeName;
-
-      // Affichage du progres
-      progress.setText(theme_title);
     });
   });
 }
@@ -252,13 +240,31 @@ function create() {
     fontSize: "40px",
     fill: "#000"
   });
+
+  // Continue game message
+  continueGame = this.add.text(130, 280, "", {
+    fontSize: "40px",
+    fill: "#000"
+  });
 }
 
 // Animation et gestion des evenements
 function update() {
   // Si game over, arret de la fonction
   if (gameOver) {
-    return;
+    if (validate.isDown && validate_is_down) {
+      // Guarantee that the following steps are only carried out once
+      validate_is_down = false;
+
+      // Reset game, remove sprite tint, erase game over message, delete bombs
+      reset_game(this);
+      player.setTint();
+      announcement.setText("");
+      continueGame.setText("");
+      bombs.children.iterate(bomb => bomb.disableBody(true, true));
+      starCount = 0;
+      this.physics.resume();
+    }
   }
 
   // Si les questions sont affichees
@@ -374,10 +380,12 @@ function hitBomb(player, bomb) {
   player.setTint(0xff0000);
   player.anims.play("turn");
   announcement.setText("Dommage, tu es mort");
+  continueGame.setText("Entrée pour recommencer");
 
   send_score(score);
 
   gameOver = true;
+  validate_is_down = true;
 }
 
 // Deconstruction de la questionnaire
@@ -393,8 +401,12 @@ function userChose(answers, count, my_this) {
 
     if (questionCount === question_db.length) {
       my_this.scene.pause();
+      // Announcing the next level
+      announcement.setText("Prochain niveau atteint !");
+      progress.setText("");
+
       send_score(score);
-      get_next_theme();
+      get_q_and_a(my_this);
       reset_game(my_this);
     } else {
       announcement.setText("Tres bien!\n+10 points");
@@ -440,7 +452,4 @@ function reset_game(instance) {
   stars.children.iterate(function(child) {
     child.enableBody(true, child.x, 0, true, true);
   });
-
-  // Announcing the next level
-  announcement.setText("Prochain niveau atteint !");
 }

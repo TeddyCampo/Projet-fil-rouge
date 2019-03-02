@@ -98,20 +98,31 @@ def get_score(request):
 
 def get_q_and_a(request):
     if request.method == "GET":
+        # Check if there is a query in the url
+        try:
+            # From url query, capture the theme pk of the last used theme
+            themeSent = request.GET.get('theme', '')
+            # Get the theme from the database
+            theme = Theme.objects.get(pk=themeSent)
+            # Add the theme to the CustomUser's profile
+            user = CustomUser.objects.get(username=request.user.username)
+            user.themes.add(theme)
+        except:
+            print("No query because first party of game")
+
         print("I received a q_and_a request !")
         """ Get the field from the DB (equal to 1 because there is only Geography) """
         field = Field.objects.get(pk=1)
-        """ Get the theme related to the field ("first()" because only one theme) """
+
         username = request.user.username
-        # user = CustomUser.objects.get(username=username)
 
         userThemes = Theme.objects.filter(
-            customuser__username__contains=username)
+            customuser__username=username)
         allThemes = Theme.objects.all()
         if userThemes.count() == allThemes.count():
             # random theme chosen
             randomPK = random.randint(1, allThemes.count())
-            print(randomPK)
+
             # Output single theme in order to do question and answer searches
             themeToUse = allThemes.get(pk=randomPK)
             print(themeToUse.themeName)
@@ -139,16 +150,3 @@ def get_q_and_a(request):
                 answers.append(serialized_answer)
     """ Return a json object with both questions and answers arrays """
     return JsonResponse({"questions": questions, "answers": answers, "theme": theme})
-
-
-def get_next_theme(request):
-    # From url query, capture the theme pk of the last used theme
-    themeSent = request.GET.get('theme', '')
-    # Get the theme from the database
-    theme = Theme.objects.get(pk=themeSent)
-    # Add the theme to the CustomUser's profile
-    user = CustomUser.objects.get(username=request.user.username)
-    user.themes.add(theme)
-    # Send data to game for the next level
-    get_q_and_a(request)
-    return HttpResponse("Another theme has been chosen!")
