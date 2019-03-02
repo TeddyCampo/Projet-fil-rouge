@@ -109,7 +109,7 @@ def get_q_and_a(request):
             themeToUse = allThemes.first()
             print(themeToUse.themeName)
         
-        serialized_theme = ThemeSerializer(themeToUse)
+        theme = ThemeSerializer(themeToUse).data
 
         questions = []
         answers = []
@@ -117,18 +117,25 @@ def get_q_and_a(request):
         some_questions = Question.objects.filter(theme=themeToUse.pk)
         """ Serialize the questions into a json object and push them in an array """
         for q in some_questions:
-            serialized_question = QuestionSerializer(q)
-            questions.append(serialized_question.data)
+            serialized_question = QuestionSerializer(q).data
+            questions.append(serialized_question)
             """ Get the answers related to the questions """
             some_answers = Answer.objects.filter(question=q.pk)
             """ Serialize the answers and push in array """
             for a in some_answers:
-                serialized_answer = AnswerSerializer(a)
-                answers.append(serialized_answer.data)
+                serialized_answer = AnswerSerializer(a).data
+                answers.append(serialized_answer)
     """ Return a json object with both questions and answers arrays """
-    return JsonResponse({"questions": questions, "answers": answers, "theme": serialized_theme.data})
+    return JsonResponse({"questions": questions, "answers": answers, "theme": theme})
 
 def get_next_theme(request):
+    # From url query, capture the theme pk of the last used theme
     themeSent = request.GET.get('theme', '')
-    print(themeSent)
-    return HttpResponse(themeSent)
+    # Get the theme from the database
+    theme = Theme.objects.get(pk=themeSent)
+    # Add the theme to the CustomUser's profile
+    user = CustomUser.objects.get(username=request.user.username)
+    user.themes.add(theme)
+    # Send data to game for the next level
+    get_q_and_a(request)
+    return HttpResponse("Another theme has been chosen!")

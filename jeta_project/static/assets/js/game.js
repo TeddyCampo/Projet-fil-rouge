@@ -386,12 +386,10 @@ function userChose(answers, count, my_this) {
     questionCount += 1;
 
     if (questionCount === question_db.length) {
-      announcement.setText("Felicitations\nTu as termine le niveau");
-      send_score(score)
-
       my_this.scene.pause();
+      send_score(score)
       get_next_theme()
-      // 
+      reset_game(my_this)
     } else {
       announcement.setText("Tres bien!\n+10 points");
     }
@@ -418,4 +416,27 @@ function userChose(answers, count, my_this) {
   questionnaire = null;
   arrows[index].setText("");
   my_this.physics.resume();
+}
+
+function reset_game(instance) {
+  // Unpause game
+  instance.scene.resume();
+
+  // Reset position of player
+  player.x = 100;
+  player.y = 450;
+  questionCount = 0;
+
+  // Erase stars
+  stars.children.iterate(
+    (child) => child.disableBody(true,true)
+  );
+
+  // Creation of stars
+  stars.children.iterate(function(child) {
+    child.enableBody(true, child.x, 0, true, true);
+  });
+
+  // Announcing the next level
+  announcement.setText("Prochain niveau atteint !")
 }
