@@ -10,41 +10,49 @@ from .forms import CustomUserCreationForm, ParagraphErrorList
 from rest_framework import serializers
 import random
 
+
 def accueil(request):
     return render(request, 'accueil/index.html')
+
 
 def top_five(request):
     top_players_list = CustomUser.objects.order_by('-top_score')[:5]
     latest_players_list = CustomUser.objects.order_by('-date_joined')[:5]
     return render(request, 'accueil/index.html', {
         'top_players_list': top_players_list,
-        'latest_players_list': latest_players_list })
+        'latest_players_list': latest_players_list})
+
 
 def project(request):
     return render(request, 'accueil/project.html')
 
+
 def profs(request):
     return render(request, 'accueil/profs.html')
 
+
 def faq(request):
     return render(request, 'accueil/faq.html')
+
 
 @login_required
 def game(request):
     return render(request, 'accueil/game.html')
 
+
 @transaction.atomic
 def signup(request):
     context = {}
     if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST, error_class=ParagraphErrorList)
+        form = CustomUserCreationForm(
+            request.POST, error_class=ParagraphErrorList)
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password1']
             try:
                 with transaction.atomic():
                     user = CustomUser.objects.filter(username=username)
-                    
+
                     if not user.exists():
                         user = CustomUser.objects.create(username=username)
                         user.set_password(password)
@@ -63,6 +71,7 @@ def signup(request):
     context['errors'] = form.errors.items()
     return render(request, 'accueil/signup.html', context)
 
+
 def update_score(request):
     message = ''
     if request.method == "POST":
@@ -75,6 +84,7 @@ def update_score(request):
         """ Just a message to check if score correctly saved """
     return HttpResponse(message)
 
+
 def get_score(request):
     if request.method == "GET":
         print("I received a score request !")
@@ -85,6 +95,7 @@ def get_score(request):
         score = user.top_score
     return JsonResponse({"score": score})
 
+
 def get_q_and_a(request):
     if request.method == "GET":
         print("I received a q_and_a request !")
@@ -94,7 +105,8 @@ def get_q_and_a(request):
         username = request.user.username
         # user = CustomUser.objects.get(username=username)
 
-        userThemes = Theme.objects.filter(customuser__username__contains=username)
+        userThemes = Theme.objects.filter(
+            customuser__username__contains=username)
         allThemes = Theme.objects.all()
         if userThemes.count() == allThemes.count():
             # random theme chosen
@@ -108,7 +120,7 @@ def get_q_and_a(request):
                 allThemes = allThemes.exclude(pk=themeDone.pk)
             themeToUse = allThemes.first()
             print(themeToUse.themeName)
-        
+
         theme = ThemeSerializer(themeToUse).data
 
         questions = []
@@ -127,6 +139,7 @@ def get_q_and_a(request):
                 answers.append(serialized_answer)
     """ Return a json object with both questions and answers arrays """
     return JsonResponse({"questions": questions, "answers": answers, "theme": theme})
+
 
 def get_next_theme(request):
     # From url query, capture the theme pk of the last used theme

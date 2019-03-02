@@ -2,7 +2,7 @@ let config = {
   type: Phaser.AUTO,
   width: 800,
   height: 600,
-  parent: 'phaser-game',
+  parent: "phaser-game",
   physics: {
     default: "arcade",
     arcade: {
@@ -43,103 +43,104 @@ let down_is_down;
 let up_is_down;
 
 // AJAX Request for user and score from database
-function get_and_show_score (instance) {
-  $(function () {
+function get_and_show_score(instance) {
+  $(function() {
     $.ajax({
-    url: '/get_score/',
-    type: 'GET',
-    dataType: 'json'
-    /* AJAX request call the view "get_score" which send back a json object from the database*/
-    }).done(function(response){
-      console.log(response.score)
-    /* The json object sent by the view has a "score" property with a value.*/
-      score = response.score
-    /* Store the score in a new variable scoreText to display it in the game window. */
-      scoreText = instance.add.text(16, 50, ("Score: " + score), {
+      url: "/get_score/",
+      type: "GET",
+      dataType: "json"
+      /* AJAX request call the view "get_score" which send back a json object from the database*/
+    }).done(function(response) {
+      console.log(response.score);
+      /* The json object sent by the view has a "score" property with a value.*/
+      score = response.score;
+      /* Store the score in a new variable scoreText to display it in the game window. */
+      scoreText = instance.add.text(16, 50, "Score: " + score, {
         fontSize: "25px",
         fill: "#000"
       });
-    })
-    })
-    return score   
+    });
+  });
+  return score;
 }
 
 // AJAX Request for questions and answers from database
-function get_q_and_a (instance) {
-  $(function () {
+function get_q_and_a(instance) {
+  $(function() {
     $.ajax({
-      url: '/get_q_and_a/',
-      type: 'GET',
-      dataType: 'json'
-    /* AJAX request call the view "get_score" which send back a json object from the database*/
-    }).done(function(response){
-      console.log(response)
-      q_and_a = response
-      question_db = q_and_a.questions
-      answer_db = q_and_a.answers
-      theme_title = q_and_a.theme.themeName
+      url: "/get_q_and_a/",
+      type: "GET",
+      dataType: "json"
+      /* AJAX request call the view "get_score" which send back a json object from the database*/
+    }).done(function(response) {
+      console.log(response);
+      q_and_a = response;
+      question_db = q_and_a.questions;
+      answer_db = q_and_a.answers;
+      theme_title = q_and_a.theme.themeName;
 
       // Affichage du progres
-      progress = instance.add.text(16, 16, theme_title, { fontSize: "25px", fill: "#000" });
-    })
-  })
+      progress = instance.add.text(16, 16, theme_title, {
+        fontSize: "25px",
+        fill: "#000"
+      });
+    });
+  });
 }
 
 // Get cookie so that CSRF token can be made later for Post request
 function getCookie(name) {
   var cookieValue = null;
-  if (document.cookie && document.cookie !== '') {
-      var cookies = document.cookie.split(';');
-      for (var i = 0; i < cookies.length; i++) {
-          var cookie = jQuery.trim(cookies[i]);
-          // Does this cookie string begin with the name we want?
-          if (cookie.substring(0, name.length + 1) === (name + '=')) {
-              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-              break;
-          }
+  if (document.cookie && document.cookie !== "") {
+    var cookies = document.cookie.split(";");
+    for (var i = 0; i < cookies.length; i++) {
+      var cookie = jQuery.trim(cookies[i]);
+      // Does this cookie string begin with the name we want?
+      if (cookie.substring(0, name.length + 1) === name + "=") {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
       }
+    }
   }
   return cookieValue;
 }
 
 // AJAX Post request for sending score to database
-function send_score (score) {
-  var csrf_token = getCookie('csrftoken');
+function send_score(score) {
+  var csrf_token = getCookie("csrftoken");
 
-  console.log(csrf_token)
-  $(function () {
-      $.ajax({
-      url: '/update_score/',
-      content: 'application/x-www-form-urlencoded',
-      data: {'csrfmiddlewaretoken': csrf_token, 'score': score},
-      type: 'POST'
-    }).done(function(response){
-      console.log(response)
-    })
-  })
+  console.log(csrf_token);
+  $(function() {
+    $.ajax({
+      url: "/update_score/",
+      content: "application/x-www-form-urlencoded",
+      data: { csrfmiddlewaretoken: csrf_token, score: score },
+      type: "POST"
+    }).done(function(response) {
+      console.log(response);
+    });
+  });
 }
 
 function get_next_theme() {
-  finishedTheme = q_and_a.theme.id
-  $(function () {
+  finishedTheme = q_and_a.theme.id;
+  $(function() {
     $.ajax({
       url: `/get_next_theme?theme=${finishedTheme}`,
-      type: 'GET',
-      dataType: 'json'
-    /* AJAX request call the view "get_score" which send back a json object from the database*/
-    }).done(function(response){
-      console.log(response)
-      q_and_a = response
-      question_db = q_and_a.questions
-      answer_db = q_and_a.answers
-      theme_title = q_and_a.theme.themeName
+      type: "GET",
+      dataType: "json"
+      /* AJAX request call the view "get_score" which send back a json object from the database*/
+    }).done(function(response) {
+      console.log(response);
+      q_and_a = response;
+      question_db = q_and_a.questions;
+      answer_db = q_and_a.answers;
+      theme_title = q_and_a.theme.themeName;
 
       // Affichage du progres
       progress.setText(theme_title);
-    })
-  })
-  // send_score()
-  // reset_game()
+    });
+  });
 }
 
 // Creation de l'objet
@@ -226,10 +227,10 @@ function create() {
   bombs = this.physics.add.group();
 
   // Affichage du score
-  score = get_and_show_score(this)
+  score = get_and_show_score(this);
 
   // Get questions, answers, theme and display theme
-  get_q_and_a(this)
+  get_q_and_a(this);
 
   // Gestion des collisions
   this.physics.add.collider(player, platforms);
@@ -265,8 +266,8 @@ function update() {
     arrows[index].setText("> ");
 
     if (cursors.left.isDown || cursors.right.isDown) {
-      down_is_down = false
-      up_is_down = false
+      down_is_down = false;
+      up_is_down = false;
     } else if (cursors.down.isDown) {
       down_is_down = true;
       up_is_down = false;
@@ -274,12 +275,12 @@ function update() {
       up_is_down = true;
       down_is_down = false;
     } else if (down_is_down && cursors.down.isUp) {
-      down_is_down = false
+      down_is_down = false;
       arrows[index].setText("");
       index = (index + 1) % arrows.length;
       console.log(index);
     } else if (up_is_down && cursors.up.isUp) {
-      up_is_down = false
+      up_is_down = false;
       arrows[index].setText("");
       index = (index + (arrows.length - 1)) % arrows.length;
       console.log(index);
@@ -335,10 +336,15 @@ function collectStar(player, star) {
     let questionID = question_db[questionCount].id;
 
     // Une question choisie par le parametre questionCount
-    question = this.add.text(120, 100, question_db[questionCount].questionText, {
-      fontSize: "25px",
-      fill: "#000"
-    });
+    question = this.add.text(
+      120,
+      100,
+      question_db[questionCount].questionText,
+      {
+        fontSize: "25px",
+        fill: "#000"
+      }
+    );
 
     // Generation d'une liste des reponses qui correspondent a la question
     let y_position = 130;
@@ -369,7 +375,7 @@ function hitBomb(player, bomb) {
   player.anims.play("turn");
   announcement.setText("Dommage, tu es mort");
 
-  send_score(score)
+  send_score(score);
 
   gameOver = true;
 }
@@ -387,9 +393,9 @@ function userChose(answers, count, my_this) {
 
     if (questionCount === question_db.length) {
       my_this.scene.pause();
-      send_score(score)
-      get_next_theme()
-      reset_game(my_this)
+      send_score(score);
+      get_next_theme();
+      reset_game(my_this);
     } else {
       announcement.setText("Tres bien!\n+10 points");
     }
@@ -428,9 +434,7 @@ function reset_game(instance) {
   questionCount = 0;
 
   // Erase stars
-  stars.children.iterate(
-    (child) => child.disableBody(true,true)
-  );
+  stars.children.iterate(child => child.disableBody(true, true));
 
   // Creation of stars
   stars.children.iterate(function(child) {
@@ -438,5 +442,5 @@ function reset_game(instance) {
   });
 
   // Announcing the next level
-  announcement.setText("Prochain niveau atteint !")
+  announcement.setText("Prochain niveau atteint !");
 }
